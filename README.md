@@ -1,110 +1,118 @@
 ## DATE:
-# EX-7-ADVANCED-ENCRYPTION-STANDARD-DES-ALGORITHM
+## EX.9 SIMULATION OF RSA ALGORITHM
 
-## Aim:
+## AIM:
+To implement encryption and decryption using RSA algorithm.
 
-To use Advanced Encryption Standard (AES) Algorithm for a practical application like URL Encryption.
+##ALGORITHM:
+## STEP 1: Select 2 prime numbers p and q.
+## STEP 2: Calculate n and pi(n).
+## STEP 3: Choose small number e.
+## STEP 4: Calculate d.
+## STEP 5: Perform encryption and decryption and get the outputs correspondingly.
 
-## ALGORITHM: 
-  1. AES is based on a design principle known as a substitution–permutation. 
-  2. AES does not use a Feistel network like DES, it uses variant of Rijndael. 
-  3. It has a fixed block size of 128 bits, and a key size of 128, 192, or 256 bits. 
-  4. AES operates on a 4 × 4 column-major order array of bytes, termed the state
-
-## PROGRAM: 
+## PROGRAM:
 ```
 #include <stdio.h>
-#include <string.h>
+#include <math.h>
 
-// XOR encryption function
-void xor_encrypt_decrypt(char *input, char *key) {
-    int input_len = strlen(input);
-    int key_len = strlen(key);
-
-    for (int i = 0; i < input_len; i++) {
-        input[i] = input[i] ^ key[i % key_len]; // XOR encryption
+// Function to calculate greatest common divisor (GCD)
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
     }
+    return a;
+}
+
+// Function to calculate (base^exp) % mod using modular exponentiation
+int mod_exp(int base, int exp, int mod) {
+    int result = 1;
+    base = base % mod;
+    
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        exp = exp >> 1;  // exp = exp / 2
+        base = (base * base) % mod;
+    }
+    
+    return result;
+}
+
+// Function to find the modular inverse using Extended Euclidean Algorithm
+int mod_inverse(int e, int phi_n) {
+    int t = 0, new_t = 1;
+    int r = phi_n, new_r = e;
+    
+    while (new_r != 0) {
+        int quotient = r / new_r;
+        int temp_t = t;
+        t = new_t;
+        new_t = temp_t - quotient * new_t;
+        
+        int temp_r = r;
+        r = new_r;
+        new_r = temp_r - quotient * new_r;
+    }
+    
+    if (r > 1) return -1;  // No inverse
+    if (t < 0) t += phi_n;
+    
+    return t;
 }
 
 int main() {
-    char hed[] = "DES";
-    char url[] = "Karthi";
-    char key[] = "secretkey"; // Simple key for XOR encryption
-    printf("DES Encryption and Decryption\n",hed);
-    printf("Original URL: %s\n", url);
-
-    // Encrypt the URL
-    xor_encrypt_decrypt(url, key);
-    printf("Encrypted URL: %s\n", url);
-
-    // Decrypt the URL (since XOR is reversible using the same key)
-    xor_encrypt_decrypt(url, key);
-    printf("Decrypted URL: %s\n", url);
-
+    int p, q, n, phi_n, e, d;
+    int message, encrypted_message, decrypted_message;
+    
+    printf("\n            *****Simulation of RSA Encryption and Decryption*****\n\n");
+    // Get two prime numbers from the user
+    printf("Enter a prime number (p): ");
+    scanf("%d", &p);
+    printf("Enter another prime number (q): ");
+    scanf("%d", &q);
+    
+    // Calculate n and phi(n)
+    n = p * q;
+    phi_n = (p - 1) * (q - 1);
+    
+    // Choose the public key exponent e such that 1 < e < phi_n and gcd(e, phi_n) = 1
+    do {
+        printf("Enter a value for public key exponent (e) such that 1 < e < %d: ", phi_n);
+        scanf("%d", &e);
+    } while (gcd(e, phi_n) != 1);
+    
+    // Calculate the private key exponent d (modular inverse of e)
+    d = mod_inverse(e, phi_n);
+    if (d == -1) {
+        printf("Modular inverse does not exist for the given 'e'. Exiting.\n");
+        return 1;
+    }
+    
+    printf("Public key: (n = %d, e = %d)\n", n, e);
+    printf("Private key: (n = %d, d = %d)\n", n, d);
+    
+    // Get the message to encrypt
+    printf("Enter the message to encrypt (as an integer): ");
+    scanf("%d", &message);
+    
+    // Encrypt the message: ciphertext = (message^e) % n
+    encrypted_message = mod_exp(message, e, n);
+    printf("Encrypted message: %d\n", encrypted_message);
+    
+    // Decrypt the message: decrypted_message = (ciphertext^d) % n
+    decrypted_message = mod_exp(encrypted_message, d, n);
+    printf("Decrypted message: %d\n", decrypted_message);
+    
     return 0;
 }
 ```
 ## OUTPUT:
-![Screenshot 2024-10-07 104206](https://github.com/user-attachments/assets/2da77f47-f436-4d7b-836e-ccaaeac547d7)
 
-## RESULT: 
-Thus , to use Advanced Encryption Standard (AES) Algorithm for a practical application like URL Encryption is done successfully.
+![Screenshot 2024-10-24 162118](https://github.com/user-attachments/assets/43682848-ea45-4db0-aee8-103d8ade204c)
 
-## DATE:
-## EX-8-ADVANCED-ENCRYPTION-STANDARD-DES-ALGORITHM
-
-## Aim:
-  To use Advanced Encryption Standard (AES) Algorithm for a practical application like URL Encryption.
-
-## ALGORITHM: 
-  1. AES is based on a design principle known as a substitution–permutation. 
-  2. AES does not use a Feistel network like DES, it uses variant of Rijndael. 
-  3. It has a fixed block size of 128 bits, and a key size of 128, 192, or 256 bits. 
-  4. AES operates on a 4 × 4 column-major order array of bytes, termed the state
-
-## PROGRAM: 
-```
-c
-#include <stdio.h>
-#include <string.h>
-
-
-  void xor_encrypt_decrypt(char *input, char *key) {
-int input_len = strlen(input);
-int key_len = strlen(key);
-
-for (int i = 0; i < input_len; i++) {
-    input[i] = input[i] ^ key[i % key_len];
-}
-}
-
-int main() {
-    printf("\n\n\n\n      ***** ADVANCED-ENCRYPTION-STANDARD-DES-ALGORITHM *****\n\n\n");
-    
-char url[] = "DINAGARAN JOHNY";
-char key[] = "secretkey"; 
-
-printf("Original text: %s\n", url);
-
-xor_encrypt_decrypt(url, key);
-printf("Encrypted text: %s\n", url);
-
-xor_encrypt_decrypt(url, key);
-printf("Decrypted text: %s\n", url);
-
-return 0;
-}
-
-```
-
-## OUTPUT:
-
-![WhatsApp Image 2024-10-16 at 14 10 16_58cd4e6f](https://github.com/user-attachments/assets/8b8b843d-ae00-4082-887c-8d8e86ca3a3c)
-
-
-
-
-
-## RESULT: 
-
-The execution program is successfully executed.
+## RESULT:
+	Hence, the simulation of RSA algorithm is successfully done.
